@@ -186,20 +186,21 @@ function geojsonRbush(maxEntries) {
      * @returns {Object} converted to {minX, minY, maxX, maxY}
      */
     tree.toBBox = function (geojson) {
-        var bbox;
-        if (geojson.bbox) bbox = geojson.bbox;
-        else if (Array.isArray(geojson) && geojson.length === 4) bbox = geojson;
-        else if (Array.isArray(geojson) && geojson.length === 6) bbox = [geojson[0], geojson[1], geojson[3], geojson[4]];
-        else if (geojson.type === 'Feature') bbox = turfBBox(geojson);
-        else if (geojson.type === 'FeatureCollection') bbox = turfBBox(geojson);
-        else throw new Error('invalid geojson')
-
-        return {
-            minX: bbox[0],
-            minY: bbox[1],
-            maxX: bbox[2],
-            maxY: bbox[3]
-        };
+      var bbox;
+      if (geojson.bbox) bbox = geojson.bbox;
+      else if (Array.isArray(geojson) && geojson.length === 4) bbox = geojson;
+      else if (Array.isArray(geojson) && geojson.length === 6) bbox = [geojson[0], geojson[1], geojson[3], geojson[4]];
+      else if (geojson.type === 'Feature') bbox = turfBBox(geojson);
+      else if (geojson.type === 'FeatureCollection') bbox = turfBBox(geojson);
+      else throw new Error('invalid geojson')
+      const util = require('util');
+      //console.log('bbox', util.inspect(bbox, false, null));
+      return {
+        minX: Math.min(bbox[0], bbox[2]),
+        minY: Math.min(bbox[1], bbox[3]),
+        maxX: Math.max(bbox[2], bbox[0]),
+        maxY: Math.max(bbox[3], bbox[1])
+      };
     };
     return tree;
 }
